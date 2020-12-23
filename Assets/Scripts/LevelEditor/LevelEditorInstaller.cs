@@ -16,6 +16,7 @@ namespace LevelEditor
 		public override void Start()
 		{
 			_signalBus.DeclareSignal<GridCellSelectSignal>();
+			_signalBus.DeclareSignal<SelectEnvironmentItemSignal>();
 		}
 	}
 }
