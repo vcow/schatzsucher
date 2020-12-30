@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34cd0c924d8b4c2fbcd486bdba71606c, type: 3}
-  m_Name: WoodEnvironmentSettings
+  m_Script: {fileID: 11500000, guid: 7d2026458f28461188866f0dcea78421, type: 3}
+  m_Name: WoodEnvironmentItemSettings
   m_EditorClassIdentifier: 
+  _type: 1
   _prefab: {fileID: 5364779525011077258, guid: b5ea0958319896344b89e7e58e1fba79, type: 3}

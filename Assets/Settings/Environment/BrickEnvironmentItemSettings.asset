@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d121b5ac9f24d819751ed7077e04953, type: 3}
-  m_Name: ConcreteEnvironmentSettings
+  m_Script: {fileID: 11500000, guid: 7d2026458f28461188866f0dcea78421, type: 3}
+  m_Name: BrickEnvironmentItemSettings
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 7318521123663473956, guid: d53329d269fd5c94f8def16c6248a15d, type: 3}
+  _type: 2
+  _prefab: {fileID: 219738846586968641, guid: 81f6f6d43b7c09a49ae3755707197389, type: 3}
