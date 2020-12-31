@@ -3,6 +3,7 @@ using Common.Controller;
 using LevelEditor.Signals;
 using Model.Environment;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace LevelEditor.Controller
@@ -12,16 +13,23 @@ namespace LevelEditor.Controller
 	{
 		private const float CellSize = 100f;
 		private const float ScaleFactor = 3f;
+		private const float CameraDistance = 10f;
 
 		private float _zoom;
 
-		private readonly EnvironmentModel _environmentModel = new EnvironmentModel {Size = Vector2Int.one};
+		private readonly EnvironmentModel _environmentModel = new EnvironmentModel {Size = Vector2Int.one * 10};
 		private EnvironmentController _environment;
 
 		private EnvironmentItemType _environmentItemType = EnvironmentItemType.None;
 
+		private Transform _cameraTransform;
+		private Rect _screenRect;
+		private float _canvasScaleFactor;
+		private float _canvasPixelPerUnit;
+
 #pragma warning disable 649
 		[SerializeField] private RectTransform _gridContainer;
+		[SerializeField] private Camera _camera;
 
 		[Inject] private readonly DiContainer _container;
 		[Inject] private readonly SignalBus _signalBus;
@@ -35,6 +43,13 @@ namespace LevelEditor.Controller
 			_environment = _container.InstantiateComponentOnNewGameObject<EnvironmentController>(
 				"Environment", new object[] {_environmentModel});
 
+			_cameraTransform = _camera.transform;
+			_canvasScaleFactor = _gridContainer.GetComponentInParent<Canvas>().scaleFactor;
+			_canvasPixelPerUnit = _gridContainer.GetComponentInParent<CanvasScaler>().referencePixelsPerUnit;
+			_screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
+			_cameraTransform.position = Vector3.back * (CameraDistance + 0.5f);
+
 			UpdateGrid();
 		}
 
@@ -42,6 +57,19 @@ namespace LevelEditor.Controller
 		{
 			_signalBus.Unsubscribe<GridCellSelectSignal>(OnSelectCell);
 			_signalBus.Unsubscribe<SelectEnvironmentItemSignal>(OnSelectEnvironmentItem);
+		}
+
+		private void Update()
+		{
+			var pos = _gridContainer.position;
+			var piv = _gridContainer.pivot;
+			var sd = _gridContainer.rect.size;
+			var gridRect = new Rect(pos.x - sd.x * _canvasScaleFactor * piv.x,
+				pos.y - sd.y * _canvasScaleFactor * piv.y, sd.x * _canvasScaleFactor, sd.y * _canvasScaleFactor);
+
+			_cameraTransform.position = Vector3.Scale(_cameraTransform.position, Vector3.forward) +
+			                            (Vector3) ((_screenRect.center - gridRect.center) / _canvasPixelPerUnit +
+			                                       gridRect.size / _canvasPixelPerUnit * 0.5f);
 		}
 
 		private void OnSelectCell(GridCellSelectSignal signal)
@@ -62,14 +90,14 @@ namespace LevelEditor.Controller
 					Type = _environmentItemType,
 					Position = signal.CellPosition
 				};
-				
+
 				var oldItem = _environmentModel.Items.SingleOrDefault(i => i.Position == signal.CellPosition);
 				if (oldItem != null)
 				{
 					if (newItem.Equals(oldItem)) return;
 					_environmentModel.Items.Remove(oldItem);
 				}
-				
+
 				_environmentModel.Items.Add(newItem);
 				_environment.Model = _environmentModel;
 			}
@@ -123,6 +151,10 @@ namespace LevelEditor.Controller
 			}
 
 			_environment.Model = _environmentModel;
+
+			var vertical = Screen.height / (cellSize * _canvasScaleFactor);
+			var ang = Mathf.Atan2(vertical * 0.5f, CameraDistance) * 2f * Mathf.Rad2Deg;
+			_camera.fieldOfView = ang;
 		}
 
 		private RectTransform CreateCell(float cellSize, int posX, int posY)
@@ -136,7 +168,7 @@ namespace LevelEditor.Controller
 
 			const float gap = 2f;
 			var cell = _container.InstantiateComponentOnNewGameObject<GridCellController>("view",
-				new object[] {new Vector2Int(posX, posY)}).GetComponent<RectTransform>();
+				new object[] {new Vector2Int(posX, posY), _environmentModel}).GetComponent<RectTransform>();
 			cell.SetParent(cellContainer, false);
 			cell.anchorMin = Vector2.zero;
 			cell.anchorMax = Vector2.one;
