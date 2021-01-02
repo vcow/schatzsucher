@@ -3,7 +3,6 @@ using Common.Controller;
 using LevelEditor.Signals;
 using Model.Environment;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace LevelEditor.Controller
@@ -13,7 +12,7 @@ namespace LevelEditor.Controller
 	{
 		private const float CellSize = 100f;
 		private const float ScaleFactor = 3f;
-		private const float CameraDistance = 10f;
+		private const float CameraDistance = 20f;
 
 		private float _zoom;
 
@@ -25,7 +24,8 @@ namespace LevelEditor.Controller
 		private Transform _cameraTransform;
 		private Rect _screenRect;
 		private float _canvasScaleFactor;
-		private float _canvasPixelPerUnit;
+
+		private Vector2 _cameraSceneSize;
 
 #pragma warning disable 649
 		[SerializeField] private RectTransform _gridContainer;
@@ -45,7 +45,6 @@ namespace LevelEditor.Controller
 
 			_cameraTransform = _camera.transform;
 			_canvasScaleFactor = _gridContainer.GetComponentInParent<Canvas>().scaleFactor;
-			_canvasPixelPerUnit = _gridContainer.GetComponentInParent<CanvasScaler>().referencePixelsPerUnit;
 			_screenRect = new Rect(0, 0, Screen.width, Screen.height);
 
 			_cameraTransform.position = Vector3.back * (CameraDistance + 0.5f);
@@ -67,9 +66,12 @@ namespace LevelEditor.Controller
 			var gridRect = new Rect(pos.x - sd.x * _canvasScaleFactor * piv.x,
 				pos.y - sd.y * _canvasScaleFactor * piv.y, sd.x * _canvasScaleFactor, sd.y * _canvasScaleFactor);
 
-			_cameraTransform.position = Vector3.Scale(_cameraTransform.position, Vector3.forward) +
-			                            (Vector3) ((_screenRect.center - gridRect.center) / _canvasPixelPerUnit +
-			                                       gridRect.size / _canvasPixelPerUnit * 0.5f);
+			var l = _screenRect.center - gridRect.center;
+
+			_cameraTransform.position = new Vector3(
+				_environmentModel.Size.x * 0.5f + l.x * _cameraSceneSize.x / _screenRect.width,
+				_environmentModel.Size.y * 0.5f + l.y * _cameraSceneSize.y / _screenRect.height,
+				_cameraTransform.position.z);
 		}
 
 		private void OnSelectCell(GridCellSelectSignal signal)
@@ -138,7 +140,7 @@ namespace LevelEditor.Controller
 			const float padding = 10f;
 			var cellSize = Mathf.Lerp(CellSize, CellSize * ScaleFactor, _zoom);
 			_gridContainer.sizeDelta = new Vector2(_environmentModel.Size.x * cellSize,
-				                           _environmentModel.Size.y * cellSize) + Vector2.one * (padding * 2f);
+				_environmentModel.Size.y * cellSize) + Vector2.one * (padding * 2f);
 
 			for (var y = 0; y < _environmentModel.Size.y; ++y)
 			{
@@ -155,6 +157,10 @@ namespace LevelEditor.Controller
 			var vertical = Screen.height / (cellSize * _canvasScaleFactor);
 			var ang = Mathf.Atan2(vertical * 0.5f, CameraDistance) * 2f * Mathf.Rad2Deg;
 			_camera.fieldOfView = ang;
+
+			var lb = _camera.ViewportToWorldPoint(new Vector3(0, 0, CameraDistance));
+			var rt = _camera.ViewportToWorldPoint(new Vector3(1, 1, CameraDistance));
+			_cameraSceneSize = new Vector2(rt.x - lb.x, rt.y - lb.y);
 		}
 
 		private RectTransform CreateCell(float cellSize, int posX, int posY)
