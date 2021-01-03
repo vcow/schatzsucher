@@ -16,7 +16,6 @@ namespace LevelEditor.Controller
 
 		private float _zoom;
 
-		private readonly EnvironmentModel _environmentModel = new EnvironmentModel {Size = Vector2Int.one * 10};
 		private EnvironmentController _environment;
 
 		private EnvironmentItemType _environmentItemType = EnvironmentItemType.None;
@@ -28,11 +27,13 @@ namespace LevelEditor.Controller
 		private Vector2 _cameraSceneSize;
 
 #pragma warning disable 649
+
 		[SerializeField] private RectTransform _gridContainer;
 		[SerializeField] private Camera _camera;
 
 		[Inject] private readonly DiContainer _container;
 		[Inject] private readonly SignalBus _signalBus;
+		[Inject] private readonly EnvironmentModel _environmentModel;
 #pragma warning disable 649
 
 		private void Start()
@@ -40,8 +41,7 @@ namespace LevelEditor.Controller
 			_signalBus.Subscribe<GridCellSelectSignal>(OnSelectCell);
 			_signalBus.Subscribe<SelectEnvironmentItemSignal>(OnSelectEnvironmentItem);
 
-			_environment = _container.InstantiateComponentOnNewGameObject<EnvironmentController>(
-				"Environment", new object[] {_environmentModel});
+			_environment = _container.InstantiateComponentOnNewGameObject<EnvironmentController>();
 
 			_cameraTransform = _camera.transform;
 			_canvasScaleFactor = _gridContainer.GetComponentInParent<Canvas>().scaleFactor;
@@ -82,7 +82,8 @@ namespace LevelEditor.Controller
 				if (item != null)
 				{
 					_environmentModel.Items.Remove(item);
-					_environment.Model = _environmentModel;
+					Destroy(_environment.gameObject);
+					_environment = _container.InstantiateComponentOnNewGameObject<EnvironmentController>();
 				}
 			}
 			else
@@ -101,7 +102,8 @@ namespace LevelEditor.Controller
 				}
 
 				_environmentModel.Items.Add(newItem);
-				_environment.Model = _environmentModel;
+				Destroy(_environment.gameObject);
+				_environment = _container.InstantiateComponentOnNewGameObject<EnvironmentController>();
 			}
 		}
 
@@ -152,7 +154,8 @@ namespace LevelEditor.Controller
 				}
 			}
 
-			_environment.Model = _environmentModel;
+			Destroy(_environment.gameObject);
+			_environment = _container.InstantiateComponentOnNewGameObject<EnvironmentController>();
 
 			var vertical = Screen.height / (cellSize * _canvasScaleFactor);
 			var ang = Mathf.Atan2(vertical * 0.5f, CameraDistance) * 2f * Mathf.Rad2Deg;

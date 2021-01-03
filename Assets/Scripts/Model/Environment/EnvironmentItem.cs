@@ -5,12 +5,14 @@ namespace Model.Environment
 {
 	public class EnvironmentItem : IEnvironmentItem, IEquatable<IEnvironmentItem>
 	{
-		public EnvironmentItemType Type;
-		public Vector2Int Position;
+		public EnvironmentItemType Type { get; set; }
+		public Vector2Int Position { get; set; }
 
+		// IEnvironmentItem
 		EnvironmentItemType IEnvironmentItem.Type => Type;
 
 		Vector2Int IEnvironmentItem.Position => Position;
+		// \IEnvironmentItem
 
 		public bool Equals(IEnvironmentItem other)
 		{

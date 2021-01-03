@@ -10,40 +10,17 @@ namespace Common.Controller
 	{
 		private static readonly Vector3 ItemSize = Vector3.one;
 
-		private IEnvironment _model;
-
 #pragma warning disable 649
 		[Inject] private readonly DiContainer _container;
 		[Inject] private readonly IEnvironmentSettings _environmentSettings;
+		[Inject] private IEnvironment _model;
 #pragma warning restore 649
 
-		[Inject]
-		private void Construct([InjectOptional] IEnvironment model)
+		private void Start()
 		{
-			Model = model;
-		}
-
-		public IEnvironment Model
-		{
-			set
-			{
-				_model = value;
-				UpdateEnvironment();
-			}
-
-			private get => _model;
-		}
-
-		private void UpdateEnvironment()
-		{
-			var t = transform;
-			foreach (Transform child in t)
-			{
-				Destroy(child.gameObject);
-			}
-
 			if (_model == null) return;
 
+			var t = transform;
 			Vector2 offset = ItemSize * 0.5f;
 			foreach (var item in _model.Items)
 			{
