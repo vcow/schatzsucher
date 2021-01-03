@@ -35,6 +35,7 @@ namespace LevelEditor.Controller
 		private void OnShowMessage(ShowMessageSignal signal)
 		{
 			_message.text = signal.Message;
+			_callback = signal.Callback;
 			_okButon.gameObject.SetActive(signal.Buttons == MessageBoxButton.None ||
 			                              (signal.Buttons & MessageBoxButton.Ok) != 0);
 			_cancelButon.gameObject.SetActive((signal.Buttons & MessageBoxButton.Cancel) != 0);
