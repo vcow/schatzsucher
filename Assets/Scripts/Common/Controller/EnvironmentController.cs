@@ -28,7 +28,8 @@ namespace Common.Controller
 			foreach (var item in _model.Items)
 			{
 				var settings = _environmentSettings.ItemSettingsMap[item.Type];
-				var itemView = _container.InstantiatePrefab(settings.Prefab, t);
+				var itemView = _container.InstantiatePrefabForComponent<EnvironmentItemController>(
+					settings.Prefab, t, new object[] {item});
 				itemView.transform.localPosition = new Vector3(ItemSize.x * item.Position.x + offset.x,
 					ItemSize.y * item.Position.y + offset.y, 0);
 			}
