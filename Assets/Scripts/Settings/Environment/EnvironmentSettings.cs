@@ -7,6 +7,9 @@ using Zenject;
 
 namespace Settings.Environment
 {
+	/// <summary>
+	/// Настройки представления уровня.
+	/// </summary>
 	[CreateAssetMenu(fileName = "EnvironmentSettings", menuName = "Settings/Environment/EnvironmentSettings")]
 	public class EnvironmentSettings : ScriptableObjectInstaller<EnvironmentSettings>, IEnvironmentSettings
 	{

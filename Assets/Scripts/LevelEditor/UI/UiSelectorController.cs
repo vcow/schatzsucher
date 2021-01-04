@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace LevelEditor.UI
 {
+	/// <summary>
+	/// Контроллер переключателя групп элементов сцены редактора уровней.
+	/// </summary>
 	[DisallowMultipleComponent]
 	public class UiSelectorController : MonoBehaviour
 	{

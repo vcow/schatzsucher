@@ -8,6 +8,9 @@ using Zenject;
 
 namespace LevelEditor.Controller
 {
+	/// <summary>
+	/// Контроллер ячейки разметочной сетки редактора уровней.
+	/// </summary>
 	[DisallowMultipleComponent, RequireComponent(typeof(RawImage))]
 	public class GridCellController : MonoBehaviour, IPointerClickHandler
 	{

@@ -6,6 +6,9 @@ using Zenject;
 
 namespace LevelEditor.Controller
 {
+	/// <summary>
+	/// Контроллер переключателя текущего элемента редактора уровней.
+	/// </summary>
 	[DisallowMultipleComponent, RequireComponent(typeof(Toggle))]
 	public class EnvironmentItemToggleController : MonoBehaviour
 	{

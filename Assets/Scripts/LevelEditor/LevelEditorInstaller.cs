@@ -13,6 +13,9 @@ using Zenject;
 
 namespace LevelEditor
 {
+	/// <summary>
+	/// Контроллер сцены редактора уровней.
+	/// </summary>
 	public class LevelEditorInstaller : MonoInstaller<LevelEditorInstaller>
 	{
 		private Coroutine _coroutine;
@@ -25,11 +28,16 @@ namespace LevelEditor
 
 		public override void InstallBindings()
 		{
-			if (Container.HasBinding(typeof(EnvironmentModel))) return;
+			if (Container.HasBinding(typeof(EnvironmentModel)))
+			{
+				// Сцена была перегружена с инъкцией модели сцены (загрузка из файла).
+				return;
+			}
 
+			// Создать исходную модель сцены.
 			_environmentModel = new EnvironmentModel
 			{
-				Size = Vector2Int.one * 10,
+				Size = new Vector2Int(32, 22),
 				Items = new List<EnvironmentItem>()
 			};
 
@@ -46,6 +54,7 @@ namespace LevelEditor
 
 		public void OnSaveLevel()
 		{
+			// Сохранить текущую сцену в файл.
 			Assert.IsNull(_coroutine);
 			FileBrowser.SetFilters(true, ".bytes");
 			FileBrowser.SetDefaultFilter(".bytes");
@@ -69,6 +78,7 @@ namespace LevelEditor
 
 		public void OnLoadLevel()
 		{
+			// Загрузить сцену из файла.
 			Assert.IsNull(_coroutine);
 			FileBrowser.SetFilters(true, ".bytes");
 			FileBrowser.SetDefaultFilter(".bytes");
@@ -83,6 +93,7 @@ namespace LevelEditor
 				var path = FileBrowser.Result[0];
 				if (File.Exists(path))
 				{
+					// Перегрузить сцену редактора уровней с инъекцией модели загруженного уровня.
 					var raw = File.ReadAllText(path, Encoding.UTF8);
 					var environmentModel = Serializer.Deserialize<EnvironmentModel>(raw);
 					_sceneLoader.LoadSceneAsync("EditorScene",
@@ -107,6 +118,7 @@ namespace LevelEditor
 
 		public void OnCLoseEditor()
 		{
+			// Нажата кнопка выхода из редактора (для standalone сборок редактора).
 			_signalBus.Fire(new ShowMessageSignal
 			{
 				Message = "Are you really want to exit the Editor?",

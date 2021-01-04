@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Model.Environment
 {
+	/// <summary>
+	/// Модель игрового уровня.
+	/// </summary>
 	public class EnvironmentModel : IEnvironment
 	{
 		public Vector2Int Size { set; get; }

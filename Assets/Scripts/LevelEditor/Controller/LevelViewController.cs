@@ -7,12 +7,15 @@ using Zenject;
 
 namespace LevelEditor.Controller
 {
+	/// <summary>
+	/// Контроллер редактора уровней.
+	/// </summary>
 	[DisallowMultipleComponent]
 	public class LevelViewController : MonoBehaviour
 	{
-		private const float CellSize = 100f;
-		private const float ScaleFactor = 3f;
-		private const float CameraDistance = 20f;
+		private const float CellSize = 50f; /// Размер ячейки разметочной сетки редактора.
+		private const float ScaleFactor = 3f; /// Максимальный процент увеличения разметочной сетки.
+		private const float CameraDistance = 20f; /// Расстояние от сцены до камеры.
 
 		private float _zoom;
 
@@ -60,6 +63,7 @@ namespace LevelEditor.Controller
 
 		private void Update()
 		{
+			// Пересчет позиции камеры согласно положению разметочной сетки.
 			var pos = _gridContainer.position;
 			var piv = _gridContainer.pivot;
 			var sd = _gridContainer.rect.size;
@@ -76,6 +80,7 @@ namespace LevelEditor.Controller
 
 		private void OnSelectCell(GridCellSelectSignal signal)
 		{
+			// Клик по ячейке разметочной сетки.
 			if (_environmentItemType == EnvironmentItemType.None)
 			{
 				var item = _environmentModel.Items.SingleOrDefault(i => i.Position == signal.CellPosition);
@@ -109,17 +114,20 @@ namespace LevelEditor.Controller
 
 		private void OnSelectEnvironmentItem(SelectEnvironmentItemSignal signal)
 		{
+			// Выбор текущего элемента редактора уровня.
 			_environmentItemType = signal.ItemType;
 		}
 
 		public void OnZoom(float zoom)
 		{
+			// Изменение процента увеличения разметочной сетки.
 			_zoom = zoom;
 			UpdateGrid();
 		}
 
 		public void OnWidthChanged(string value)
 		{
+			// В настройках изменено значение ширины сетки.
 			var width = Mathf.Max(int.Parse(value), 1);
 			_environmentModel.Size = new Vector2Int(width, _environmentModel.Size.y);
 			UpdateGrid();
@@ -127,6 +135,7 @@ namespace LevelEditor.Controller
 
 		public void OnHeightChanged(string value)
 		{
+			// В настройках изменено значение высоты сетки.
 			var height = Mathf.Max(int.Parse(value), 1);
 			_environmentModel.Size = new Vector2Int(_environmentModel.Size.x, height);
 			UpdateGrid();
@@ -134,6 +143,7 @@ namespace LevelEditor.Controller
 
 		private void UpdateGrid()
 		{
+			// Пересчет и перестроение разметочной сетки.
 			foreach (Transform child in _gridContainer)
 			{
 				Destroy(child.gameObject);

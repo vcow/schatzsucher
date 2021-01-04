@@ -1,4 +1,3 @@
-using System;
 using LevelEditor.Signals;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +5,9 @@ using Zenject;
 
 namespace LevelEditor.Controller
 {
+	/// <summary>
+	/// Контроллер окна сообщений.
+	/// </summary>
 	[DisallowMultipleComponent]
 	public class MessageBoxController : MonoBehaviour
 	{

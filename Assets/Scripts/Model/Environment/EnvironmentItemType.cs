@@ -2,6 +2,9 @@ using System;
 
 namespace Model.Environment
 {
+	/// <summary>
+	/// Тип элемента игрового уровня.
+	/// </summary>
 	[Serializable]
 	public enum EnvironmentItemType
 	{

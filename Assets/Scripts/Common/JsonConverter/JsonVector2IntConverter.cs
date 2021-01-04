@@ -5,6 +5,10 @@ using UnityEngine.Assertions;
 
 namespace Common.JsonConverter
 {
+	/// <summary>
+	/// JSON конвертер Vector2Int, в отличие от стандартного, не сериализует
+	/// поля magnitude.
+	/// </summary>
 	public class JsonVector2IntConverter : Newtonsoft.Json.JsonConverter
 	{
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

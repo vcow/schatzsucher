@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Model.Environment
 {
+	/// <summary>
+	/// Элемент игрового уровня.
+	/// </summary>
 	public class EnvironmentItem : IEnvironmentItem, IEquatable<IEnvironmentItem>
 	{
 		public EnvironmentItemType Type { get; set; }

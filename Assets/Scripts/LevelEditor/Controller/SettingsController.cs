@@ -5,6 +5,9 @@ using Zenject;
 
 namespace LevelEditor.Controller
 {
+	/// <summary>
+	/// Контроллер окна настроек.
+	/// </summary>
 	[DisallowMultipleComponent]
 	public class SettingsController : MonoBehaviour
 	{

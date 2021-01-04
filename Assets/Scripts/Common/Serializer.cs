@@ -5,6 +5,10 @@ using Newtonsoft.Json.Converters;
 
 namespace Common
 {
+	/// <summary>
+	/// Вспомогательный класс - сериализатор/десериализатор, включает
+	/// все необходимые настройки для Newtonsoft JSON.
+	/// </summary>
 	public static class Serializer
 	{
 		private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings

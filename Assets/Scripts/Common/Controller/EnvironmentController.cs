@@ -5,6 +5,9 @@ using Zenject;
 
 namespace Common.Controller
 {
+	/// <summary>
+	/// Отрисовывает уровень. Требует наличия зависимости IEnvironment.
+	/// </summary>
 	[DisallowMultipleComponent]
 	public class EnvironmentController : MonoBehaviour
 	{
