@@ -13,10 +13,15 @@ namespace LevelEditor.Controller
 	[DisallowMultipleComponent]
 	public class LevelViewController : MonoBehaviour
 	{
-		private const float CellSize = 50f; /// Размер ячейки разметочной сетки редактора.
-		private const float ScaleFactor = 3f; /// Максимальный процент увеличения разметочной сетки.
-		private const float CameraDistance = 20f; /// Расстояние от сцены до камеры.
+		private const float CellSize = 50f;
 
+		/// Размер ячейки разметочной сетки редактора.
+		private const float ScaleFactor = 3f;
+
+		/// Максимальный процент увеличения разметочной сетки.
+		private const float CameraDistance = 30f;
+
+		/// Расстояние от сцены до камеры.
 		private float _zoom;
 
 		private EnvironmentController _environment;
@@ -30,7 +35,6 @@ namespace LevelEditor.Controller
 		private Vector2 _cameraSceneSize;
 
 #pragma warning disable 649
-
 		[SerializeField] private RectTransform _gridContainer;
 		[SerializeField] private Camera _camera;
 

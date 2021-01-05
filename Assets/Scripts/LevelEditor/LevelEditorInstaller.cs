@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using Common;
 using LevelEditor.Signals;
+using Model.Character;
 using Model.Environment;
 using SimpleFileBrowser;
 using UnityEngine;
@@ -108,7 +109,16 @@ namespace LevelEditor
 
 		public void OnPlay()
 		{
-			throw new NotImplementedException();
+			// Играть редактируемый уровень.
+			const string id = "test_player";
+			var player = new PlayerCharacter(id);
+			_sceneLoader.LoadSceneAsync(Const.GameSceneID, extraBindings: container =>
+			{
+				container.Bind<string>().FromInstance("EditorScene").AsSingle();
+				container.Bind<IEnvironment>().FromInstance(_environmentModel).AsSingle();
+				container.Bind(typeof(PlayerCharacter), typeof(IPlayerCharacter), typeof(IDisposable))
+					.WithId(id).FromInstance(player).AsCached();
+			});
 		}
 
 		private void OnDestroy()

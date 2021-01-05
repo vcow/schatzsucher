@@ -11,7 +11,7 @@ namespace Common.Controller
 	[DisallowMultipleComponent]
 	public abstract class EnvironmentItemController : MonoBehaviour
 	{
-		protected IEnvironmentItem ItemModel { get; private set; }
+		public IEnvironmentItem ItemModel { get; private set; }
 		protected IEnvironmentItemSettings ItemSettings { get; private set; }
 
 		[Inject]

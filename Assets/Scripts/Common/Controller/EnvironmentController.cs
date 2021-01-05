@@ -32,7 +32,17 @@ namespace Common.Controller
 					settings.Prefab, t, new object[] {item});
 				itemView.transform.localPosition = new Vector3(ItemSize.x * item.Position.x + offset.x,
 					ItemSize.y * item.Position.y + offset.y, 0);
+				ProcessITemView(itemView);
 			}
+		}
+
+		/// <summary>
+		/// Виртуальный метод, позволяющий добавлять элементам уровня дополнительные контроллеры.
+		/// </summary>
+		/// <param name="itemView">Созданное представление элемента уровня.</param>
+		protected virtual void ProcessITemView(EnvironmentItemController itemView)
+		{
+			// Override in children.
 		}
 	}
 }
