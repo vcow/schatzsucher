@@ -14,7 +14,7 @@ namespace Common.Controller
 		private static readonly Vector3 ItemSize = Vector3.one;
 
 #pragma warning disable 649
-		[Inject] private readonly DiContainer _container;
+		[Inject] protected readonly DiContainer Container;
 		[Inject] private readonly IEnvironmentSettings _environmentSettings;
 		[Inject] private IEnvironment _model;
 #pragma warning restore 649
@@ -28,7 +28,7 @@ namespace Common.Controller
 			foreach (var item in _model.Items)
 			{
 				var settings = _environmentSettings.ItemSettingsMap[item.Type];
-				var itemView = _container.InstantiatePrefabForComponent<EnvironmentItemController>(
+				var itemView = Container.InstantiatePrefabForComponent<EnvironmentItemController>(
 					settings.Prefab, t, new object[] {item});
 				itemView.transform.localPosition = new Vector3(ItemSize.x * item.Position.x + offset.x,
 					ItemSize.y * item.Position.y + offset.y, 0);

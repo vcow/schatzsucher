@@ -1,9 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Common;
+using GameScene.Input;
 using LevelEditor.Signals;
 using Model.Character;
 using Model.Environment;
@@ -42,8 +42,7 @@ namespace LevelEditor
 				Items = new List<EnvironmentItem>()
 			};
 
-			Container.Bind(typeof(EnvironmentModel), typeof(IEnvironment))
-				.FromInstance(_environmentModel).AsSingle();
+			Container.BindInterfacesAndSelfTo<EnvironmentModel>().FromInstance(_environmentModel).AsSingle();
 		}
 
 		private void Awake()
@@ -98,8 +97,7 @@ namespace LevelEditor
 					var raw = File.ReadAllText(path, Encoding.UTF8);
 					var environmentModel = Serializer.Deserialize<EnvironmentModel>(raw);
 					_sceneLoader.LoadSceneAsync("EditorScene",
-						extraBindings: container =>
-							container.Bind(typeof(EnvironmentModel), typeof(IEnvironment))
+						extraBindings: container => container.BindInterfacesAndSelfTo<EnvironmentModel>()
 								.FromInstance(environmentModel).AsSingle());
 				}
 			}
@@ -112,12 +110,13 @@ namespace LevelEditor
 			// Играть редактируемый уровень.
 			const string id = "test_player";
 			var player = new PlayerCharacter(id);
+			var input = new LocalInput();
 			_sceneLoader.LoadSceneAsync(Const.GameSceneID, extraBindings: container =>
 			{
 				container.Bind<string>().FromInstance("EditorScene").AsSingle();
 				container.Bind<IEnvironment>().FromInstance(_environmentModel).AsSingle();
-				container.Bind(typeof(PlayerCharacter), typeof(IPlayerCharacter), typeof(IDisposable))
-					.WithId(id).FromInstance(player).AsCached();
+				container.BindInterfacesAndSelfTo<PlayerCharacter>().FromInstance(player).WithConcreteId(id);
+				container.BindInterfacesTo<LocalInput>().FromInstance(input).WithConcreteId(id);
 			});
 		}
 

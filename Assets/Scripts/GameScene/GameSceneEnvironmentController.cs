@@ -11,7 +11,7 @@ namespace GameScene
 			switch (itemView.ItemModel.Type)
 			{
 				case EnvironmentItemType.Enter:
-					itemView.gameObject.AddComponent<EnterController>();
+					Container.InstantiateComponent<EnterController>(itemView.gameObject);
 					break;
 			}
 		}

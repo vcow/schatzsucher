@@ -33,15 +33,16 @@ namespace GameScene.Controller
 
 		public void OnBack()
 		{
+			//  Нажата кнопка возврата к предыдущей сцене.
 			switch (_backSceneId)
 			{
 				case Const.EditorSceneID:
-					var environmentModel = (EnvironmentModel) _environment;
+					// Игра вызывалась из редактора. Вернуть в редактор модель уровня.
 					_sceneLoader.LoadSceneAsync(Const.EditorSceneID, extraBindings: container =>
-						container.Bind(typeof(EnvironmentModel), typeof(IEnvironment))
-							.FromInstance(environmentModel).AsSingle());
+						container.BindInterfacesAndSelfTo<EnvironmentModel>().FromInstance(_environment).AsSingle());
 					break;
 				default:
+					// Игра вызывалась из стартовой сцены. Вернуть результат.
 					_sceneLoader.LoadSceneAsync(_backSceneId, extraBindings: container =>
 						container.Bind<IGameResult>().FromInstance(_gameResult).AsCached());
 					break;
