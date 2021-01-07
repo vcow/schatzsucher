@@ -1,4 +1,5 @@
 using System;
+using GameScene.Input;
 using UniRx;
 using UnityEngine;
 
@@ -12,10 +13,13 @@ namespace Model.Character
 		public readonly FloatReactiveProperty Health;
 		public readonly ReactiveProperty<Vector2Int> Position;
 		public readonly BoolReactiveProperty IsActive;
+		
+		public IInput Input { get; }
 
-		public PlayerCharacter(string id, int numLives = 1, float health = 1f,
+		public PlayerCharacter(IInput input, string id, int numLives = 1, float health = 1f,
 			Vector2Int? position = null, bool isActive = false)
 		{
+			Input = input;
 			_id = id;
 			NumLives = new IntReactiveProperty(numLives);
 			Health = new FloatReactiveProperty(health);

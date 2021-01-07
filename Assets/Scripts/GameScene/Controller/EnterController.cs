@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Common.Controller;
+using GameScene.Game;
 using Model.Character;
 using UniRx;
 using UnityEngine;
@@ -12,23 +14,37 @@ namespace GameScene.Controller
 	/// </summary>
 	[DisallowMultipleComponent,
 	 RequireComponent(typeof(EnterEnvironmentItemController), typeof(Collider))]
-	public class EnterController : MonoBehaviour
+	public class EnterController : MonoBehaviour, IEnter
 	{
-		private const string PlayerPrefabPath = "Characters/PlayerCharacter.prefab";
-
+		private readonly Queue<PlayerCharacter> _spawnQueue = new Queue<PlayerCharacter>();
 		private readonly BoolReactiveProperty _isBusy = new BoolReactiveProperty(false);
 
-		private IReadOnlyList<PlayerCharacter> _players;
 		private DiContainer _container;
-
-#pragma warning disable 649
-#pragma warning restore 649
 
 		[Inject]
 		private void Construct(DiContainer container)
 		{
 			_container = container;
-			_players = container.ResolveAll<PlayerCharacter>();
+			_container.Bind<IEnter>().FromInstance(this).AsCached();
+		}
+		
+		// IEnter
+		public IReadOnlyReactiveProperty<bool> IsBusy => _isBusy;
+
+		public void Spawn(PlayerController player)
+		{
+			player.transform.position = transform.position;
+		}
+		// \IEnter
+
+		private void OnCollisionEnter(Collision other)
+		{
+			Debug.Log("On Enter");
+		}
+
+		private void OnCollisionExit(Collision other)
+		{
+			Debug.Log("On Exit");
 		}
 	}
 }

@@ -1,3 +1,4 @@
+using GameScene.Game;
 using Model.Game;
 using Zenject;
 
@@ -11,13 +12,14 @@ namespace GameScene
 		public override void InstallBindings()
 		{
 			var gameResult = new GameResult();
-			Container.Bind(typeof(GameResult), typeof(IGameResult))
-				.FromInstance(gameResult).AsSingle();
+			Container.BindInterfacesTo<Game.Game>().AsSingle();
+			Container.BindInterfacesAndSelfTo<GameResult>().FromInstance(gameResult).AsSingle();
 		}
 
 		public override void Start()
 		{
 			Container.InstantiateComponentOnNewGameObject<GameSceneEnvironmentController>();
+			Container.Resolve<IGame>().Start();
 		}
 	}
 }

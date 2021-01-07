@@ -109,14 +109,13 @@ namespace LevelEditor
 		{
 			// Играть редактируемый уровень.
 			const string id = "test_player";
-			var player = new PlayerCharacter(id);
 			var input = new LocalInput();
+			var player = new PlayerCharacter(input, id);
 			_sceneLoader.LoadSceneAsync(Const.GameSceneID, extraBindings: container =>
 			{
 				container.Bind<string>().FromInstance("EditorScene").AsSingle();
 				container.Bind<IEnvironment>().FromInstance(_environmentModel).AsSingle();
-				container.BindInterfacesAndSelfTo<PlayerCharacter>().FromInstance(player).WithConcreteId(id);
-				container.BindInterfacesTo<LocalInput>().FromInstance(input).WithConcreteId(id);
+				container.BindInterfacesAndSelfTo<PlayerCharacter>().FromInstance(player).AsCached();
 			});
 		}
 
