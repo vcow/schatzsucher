@@ -35,7 +35,7 @@ namespace GameScene.Controller
 
 		private void Update()
 		{
-			_rigidbody.velocity = _input.MoveDirection.Value;
+			_rigidbody.velocity = new Vector3(_input.MoveDirection.Value.x, _rigidbody.velocity.y);
 		}
 	}
 }

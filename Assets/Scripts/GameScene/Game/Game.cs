@@ -24,6 +24,7 @@ namespace GameScene.Game
 
 #pragma warning disable 649
 		[Inject] private readonly DiContainer _container;
+		[Inject] private readonly IReadOnlyList<IEnter> _enters;
 #pragma warning restore 649
 
 		// IGame
@@ -89,15 +90,14 @@ namespace GameScene.Game
 				return;
 			}
 
-			var enters = _container.ResolveAll<IEnter>();
-			if (enters.Count <= 0)
+			if (_enters.Count <= 0)
 			{
 				Debug.LogError("There is no Enter for players in the scene.");
 				return;
 			}
 
 			// Выбрать точку входа.
-			var enter = enters.Count > 1 ? enters[Random.Range(0, enters.Count)] : enters[0];
+			var enter = _enters.Count > 1 ? _enters[Random.Range(0, _enters.Count)] : _enters[0];
 			var player = _container.InstantiatePrefabResourceForComponent<PlayerController>(
 				PlayerPrefabPath, new object[] {character.Input, character});
 			enter.Spawn(player);

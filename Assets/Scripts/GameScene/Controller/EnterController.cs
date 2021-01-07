@@ -19,15 +19,15 @@ namespace GameScene.Controller
 		private readonly Queue<PlayerCharacter> _spawnQueue = new Queue<PlayerCharacter>();
 		private readonly BoolReactiveProperty _isBusy = new BoolReactiveProperty(false);
 
-		private DiContainer _container;
+#pragma warning disable 649
+		[Inject] private readonly List<IEnter> _enters;
+#pragma warning restore 649
 
-		[Inject]
-		private void Construct(DiContainer container)
+		private void Start()
 		{
-			_container = container;
-			_container.Bind<IEnter>().FromInstance(this).AsCached();
+			_enters.Add(this);
 		}
-		
+
 		// IEnter
 		public IReadOnlyReactiveProperty<bool> IsBusy => _isBusy;
 
