@@ -28,6 +28,11 @@ namespace GameScene.Controller
 			_enters.Add(this);
 		}
 
+		private void OnDestroy()
+		{
+			_enters.Remove(this);
+		}
+
 		// IEnter
 		public IReadOnlyReactiveProperty<bool> IsBusy => _isBusy;
 
@@ -36,15 +41,5 @@ namespace GameScene.Controller
 			player.transform.position = transform.position;
 		}
 		// \IEnter
-
-		private void OnCollisionEnter(Collision other)
-		{
-			Debug.Log("On Enter");
-		}
-
-		private void OnCollisionExit(Collision other)
-		{
-			Debug.Log("On Exit");
-		}
 	}
 }
