@@ -13,6 +13,8 @@ namespace Model.Character
 		/// </summary>
 		string Id { get; }
 		
+		bool IsMainPlayer { get; }
+		
 		/// <summary>
 		/// Количество жизней игрока.
 		/// </summary>

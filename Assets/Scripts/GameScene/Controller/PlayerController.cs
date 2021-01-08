@@ -1,4 +1,4 @@
-using System;
+using Cinemachine;
 using GameScene.Input;
 using Model.Character;
 using UnityEngine;
@@ -17,8 +17,12 @@ namespace GameScene.Controller
 
 		private Rigidbody _rigidbody;
 
+		private CinemachineBrain _cinemachineBrain;
+
 #pragma warning disable 649
 		[SerializeField] private Transform _character;
+
+		[Inject] private readonly PlayerVCamController _playerVCamController;
 #pragma warning restore 649
 
 		[Inject]
@@ -31,6 +35,16 @@ namespace GameScene.Controller
 		private void Start()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
+			
+			var cam = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
+			_cinemachineBrain = cam ? cam.GetComponent<CinemachineBrain>() : null;
+
+			if (_cinemachineBrain && _characterModel.IsMainPlayer)
+			{
+				_playerVCamController.VirtualCamera.Follow = transform;
+				_playerVCamController.VirtualCamera.MoveToTopOfPrioritySubqueue();
+			}
+
 		}
 
 		private void Update()
