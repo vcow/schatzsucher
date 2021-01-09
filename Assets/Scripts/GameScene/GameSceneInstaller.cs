@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using GameScene.Game;
-using GameScene.Signals;
 using Model.Game;
 using Zenject;
 
@@ -27,8 +26,8 @@ namespace GameScene
 			Container.Bind<List<ICharacter>>().AsSingle();
 			Container.Bind<IReadOnlyList<ICharacter>>().To<List<ICharacter>>().FromResolve();
 			
-			Container.DeclareSignal<EnterToStairSignal>();
-			Container.DeclareSignal<ExitFromStairSignal>();
+			// Container.DeclareSignal<EnterToItemSignal>();
+			// Container.DeclareSignal<ExitFromItemSignal>();
 		}
 
 		public override void Start()

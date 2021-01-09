@@ -4,7 +4,7 @@ using Model.Game;
 using UnityEngine;
 using Zenject;
 
-namespace GameScene.Controller
+namespace GameScene.Controller.UI
 {
 	/// <summary>
 	/// Контроллер главного UI игровой сцены.

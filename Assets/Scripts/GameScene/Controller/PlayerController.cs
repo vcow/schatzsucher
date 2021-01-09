@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Cinemachine;
+using GameScene.Controller.Utility;
 using GameScene.Game;
 using GameScene.Input;
-using GameScene.Signals;
 using Model.Character;
 using UniRx;
 using UnityEngine;
@@ -24,22 +24,20 @@ namespace GameScene.Controller
 
 		private CinemachineBrain _cinemachineBrain;
 
-		private readonly Subject<bool> _isOnStairStream = new Subject<bool>();
 		private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
+		private bool _isOnStair;
+		private bool _isFalling;
+
+		private readonly HashSet<Collider> _collisions = new HashSet<Collider>();
 
 #pragma warning disable 649
 		[SerializeField] private Transform _character;
 
+		[Inject] private readonly DiContainer _container;
 		[Inject] private readonly PlayerVCamController _playerVCamController;
 		[Inject] private readonly List<ICharacter> _characters;
-		[Inject] private readonly SignalBus _signalBus;
 #pragma warning restore 649
-
-		public PlayerController()
-		{
-			IsOnStair = _isOnStairStream.ThrottleFrame(2).DistinctUntilChanged()
-				.ToReadOnlyReactiveProperty(false);
-		}
 
 		[Inject]
 		private void Construct(IInput input, IPlayerCharacter characterModel)
@@ -54,8 +52,6 @@ namespace GameScene.Controller
 		public Bounds Bounds => _collider.bounds;
 		// \ICharacter
 
-		public IReadOnlyReactiveProperty<bool> IsOnStair { get; }
-
 		private void Start()
 		{
 			_characters.Add(this);
@@ -63,20 +59,13 @@ namespace GameScene.Controller
 			_rigidbody = GetComponent<Rigidbody>();
 			_collider = GetComponent<Collider>();
 
-			_signalBus.Subscribe<EnterToStairSignal>(OnEnterToStair);
-			_signalBus.Subscribe<ExitFromStairSignal>(OnExitFromStair);
-
-			IsOnStair.Subscribe(b =>
-			{
-				if (b)
+			_container.InstantiateComponent<StairAttitude>(gameObject)
+				.IsOnStair.Subscribe(b =>
 				{
-					Debug.Log("Enter to stair.");
-				}
-				else
-				{
-					Debug.Log("Exit from stair.");
-				}
-			}).AddTo(_disposables);
+					_isOnStair = b;
+					_rigidbody.useGravity = !b;
+					if (_collisions.Count <= 0 && !_isOnStair) _isFalling = true;
+				}).AddTo(_disposables);
 
 			var cam = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
 			_cinemachineBrain = cam != null ? cam.GetComponent<CinemachineBrain>() : null;
@@ -88,34 +77,25 @@ namespace GameScene.Controller
 			}
 		}
 
-		private void OnExitFromStair(ExitFromStairSignal signal)
-		{
-			if (signal.CharacterId != Id) return;
-			_isOnStairStream.OnNext(false);
-		}
-
-		private void OnEnterToStair(EnterToStairSignal signal)
-		{
-			if (signal.CharacterId != Id) return;
-			_isOnStairStream.OnNext(true);
-		}
-
-		private void OnDestroy()
-		{
-			_disposables.Dispose();
-
-			_signalBus.Unsubscribe<EnterToStairSignal>(OnEnterToStair);
-			_signalBus.Unsubscribe<ExitFromStairSignal>(OnExitFromStair);
-
-			_isOnStairStream.OnCompleted();
-			_isOnStairStream.Dispose();
-
-			_characters.Remove(this);
-		}
-
 		private void Update()
 		{
-			_rigidbody.velocity = new Vector3(_input.MoveDirection.Value.x, _rigidbody.velocity.y);
+			if (_isFalling) return;
+
+			_rigidbody.velocity = _isOnStair
+				? new Vector3(_input.MoveDirection.Value.x, _input.MoveDirection.Value.y)
+				: new Vector3(_input.MoveDirection.Value.x, _rigidbody.velocity.y);
+		}
+
+		private void OnCollisionEnter(Collision other)
+		{
+			if (_collisions.Count <= 0) _isFalling = false;
+			_collisions.Add(other.collider);
+		}
+
+		private void OnCollisionExit(Collision other)
+		{
+			_collisions.Remove(other.collider);
+			if (_collisions.Count <= 0 && !_isOnStair) _isFalling = true;
 		}
 	}
 }
