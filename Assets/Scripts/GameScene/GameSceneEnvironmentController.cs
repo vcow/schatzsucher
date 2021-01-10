@@ -16,6 +16,9 @@ namespace GameScene
 				case EnvironmentItemType.Stair:
 					Container.InstantiateComponent<StairController>(itemView.gameObject);
 					break;
+				case EnvironmentItemType.Rope:
+					Container.InstantiateComponent<RopeController>(itemView.gameObject);
+					break;
 			}
 		}
 	}

@@ -28,11 +28,13 @@ namespace GameScene.Controller
 
 		private bool _isOnStair;
 		private bool _isFalling;
+		private bool _isHanging;
 
 		private readonly HashSet<Collider> _collisions = new HashSet<Collider>();
 
 #pragma warning disable 649
 		[SerializeField] private Transform _character;
+		[SerializeField] private GameObject _hangCollider;
 
 		[Inject] private readonly DiContainer _container;
 		[Inject] private readonly PlayerVCamController _playerVCamController;

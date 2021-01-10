@@ -23,6 +23,9 @@ namespace GameScene
 			Container.Bind<List<IStair>>().AsSingle();
 			Container.Bind<IReadOnlyList<IStair>>().To<List<IStair>>().FromResolve();
 
+			Container.Bind<List<IRope>>().AsSingle();
+			Container.Bind<IReadOnlyList<IRope>>().To<List<IRope>>().FromResolve();
+
 			Container.Bind<List<ICharacter>>().AsSingle();
 			Container.Bind<IReadOnlyList<ICharacter>>().To<List<ICharacter>>().FromResolve();
 			

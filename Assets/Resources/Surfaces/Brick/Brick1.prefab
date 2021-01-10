@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1228332799595003927}
   - component: {fileID: 3983518554609947916}
   - component: {fileID: 7802290425077999971}
-  - component: {fileID: 4490126860519327119}
   - component: {fileID: -6791274091237500762}
   m_Layer: 0
   m_Name: Brick1
@@ -97,22 +96,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &4490126860519327119
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 219738846586968641}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &-6791274091237500762
 MonoBehaviour:
   m_ObjectHideFlags: 0
