@@ -1,5 +1,3 @@
-using System;
-using UniRx;
 using UnityEngine;
 
 namespace GameScene.Input
@@ -12,11 +10,11 @@ namespace GameScene.Input
 		/// <summary>
 		/// Текущее направление движения.
 		/// </summary>
-		IReadOnlyReactiveProperty<Vector2> MoveDirection { get; }
+		Vector2 MoveDirection { get; }
 		
 		/// <summary>
 		/// Выстрел.
 		/// </summary>
-		IObservable<bool> Fire { get; }
+		bool Fire { get; }
 	}
 }

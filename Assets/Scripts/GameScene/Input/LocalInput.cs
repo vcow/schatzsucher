@@ -9,47 +9,28 @@ namespace GameScene.Input
 	/// </summary>
 	public class LocalInput : IInput, IDisposable
 	{
-		private readonly ReactiveProperty<Vector2> _moveDirection = new ReactiveProperty<Vector2>(Vector2.zero);
-		private readonly Subject<bool> _fire = new Subject<bool>();
 		private readonly IDisposable _updateHandler;
-
-		private bool _lastFire;
 
 		public LocalInput()
 		{
 			_updateHandler = Observable.EveryUpdate().Subscribe(l =>
 			{
-				var horizontal = UnityEngine.Input.GetAxis("Horizontal");
-				var vertical = UnityEngine.Input.GetAxis("Vertical");
-				var fire = UnityEngine.Input.GetButton("Fire1");
-
-				if (!MoveDirection.Value.x.Equals(horizontal) || !MoveDirection.Value.y.Equals(vertical))
-				{
-					_moveDirection.SetValueAndForceNotify(new Vector2(horizontal, vertical));
-				}
-
-				if (fire && !_lastFire)
-				{
-					_fire.OnNext(true);
-				}
-
-				_lastFire = fire;
+				MoveDirection = new Vector2(
+					UnityEngine.Input.GetAxis("Horizontal"),
+					UnityEngine.Input.GetAxis("Vertical"));
+				Fire = UnityEngine.Input.GetButton("Fire1");
 			});
 		}
 
 		// IInput
-		public IReadOnlyReactiveProperty<Vector2> MoveDirection => _moveDirection;
+		public Vector2 MoveDirection { get; private set; } = Vector2.zero;
 
-		public IObservable<bool> Fire => _fire;
+		public bool Fire { get; private set; }
 		// \IInput
 
 		void IDisposable.Dispose()
 		{
 			_updateHandler.Dispose();
-			_moveDirection.Dispose();
-
-			_fire.OnCompleted();
-			_fire.Dispose();
 		}
 	}
 }
