@@ -129,8 +129,8 @@ namespace GameScene.Controller
 			_ropeAttitude.IsOnComponent.Where(b => !b).Subscribe(b => IsHanging = false).AddTo(_disposables);
 			_ropeAttitude.enabled = false;
 
-			_maxFallSpeed = Mathf.Abs(
-				(_playerCharacterSettings.DeadlyFallSpeed - _playerCharacterSettings.SafeFallSpeed) * 0.5f);
+			_maxFallSpeed = _playerCharacterSettings.SafeFallSpeed + Mathf.Abs(
+				(_playerCharacterSettings.DeadlyFallSpeed - _playerCharacterSettings.SafeFallSpeed) * 0.3f);
 			Assert.IsTrue(_maxFallSpeed > 0);
 
 			var cam = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
