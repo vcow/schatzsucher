@@ -35,14 +35,14 @@ namespace GameScene.Controller
 		private readonly HashSet<Collider> _collisions = new HashSet<Collider>();
 
 		private bool _ios, _if, _ih;
-		private CharacterDirection _lastMoveDirection = CharacterDirection.None;
 		private Tween _turnTween;
 		private float _maxFallSpeed;
 
-		private static readonly int FallSpeedKey = Animator.StringToHash("FallSpeed");
-		private static readonly int MoveKey = Animator.StringToHash("Move");
-		private static readonly int OnStairKey = Animator.StringToHash("OnStair");
+		private static readonly int StairKey = Animator.StringToHash("Stair");
 		private static readonly int HangKey = Animator.StringToHash("Hang");
+		private static readonly int FallKey = Animator.StringToHash("Fall");
+		private static readonly int HorizontalSpeedKey = Animator.StringToHash("HorizontalSpeed");
+		private static readonly int VerticalSpeedKey = Animator.StringToHash("VerticalSpeed");
 
 #pragma warning disable 649
 		[SerializeField] private Transform _character;
@@ -79,7 +79,7 @@ namespace GameScene.Controller
 				_rigidbody.useGravity = !_ios;
 				if (_collisions.Count <= 0 && !_ios) IsFalling = true;
 				if (_ios) LookAt(Direction.Front);
-				_animator.SetBool(OnStairKey, _ios);
+				_animator.SetBool(StairKey, _ios);
 			}
 		}
 
@@ -90,12 +90,7 @@ namespace GameScene.Controller
 			{
 				if (value == _if) return;
 				_if = value;
-				if (!_if) _animator.SetFloat(FallSpeedKey, 0);
-				if (_lastMoveDirection != CharacterDirection.None)
-				{
-					_lastMoveDirection = CharacterDirection.None;
-					_animator.SetInteger(MoveKey, (int) CharacterDirection.None);
-				}
+				_animator.SetBool(FallKey, _if);
 			}
 		}
 
@@ -108,7 +103,26 @@ namespace GameScene.Controller
 				_ih = value;
 				_ropeAttitude.enabled = _ih;
 				_hangCollider.gameObject.SetActive(_ih);
-				if (_ih) LookAt(Direction.Front);
+				if (_ih)
+				{
+					LookAt(Direction.Front);
+				}
+				else
+				{
+					foreach (var c in _collisions.ToArray())
+					{
+						if (c.GetComponent<IRope>() != null)
+						{
+							_collisions.Remove(c);
+						}
+					}
+
+					if (_collisions.Count <= 0)
+					{
+						IsFalling = true;
+					}
+				}
+
 				_animator.SetBool(HangKey, _ih);
 			}
 		}
@@ -130,7 +144,8 @@ namespace GameScene.Controller
 			_ropeAttitude.enabled = false;
 
 			_maxFallSpeed = _playerCharacterSettings.SafeFallSpeed + Mathf.Abs(
-				(_playerCharacterSettings.DeadlyFallSpeed - _playerCharacterSettings.SafeFallSpeed) * 0.3f);
+				                (_playerCharacterSettings.DeadlyFallSpeed - _playerCharacterSettings.SafeFallSpeed) *
+				                0.3f);
 			Assert.IsTrue(_maxFallSpeed > 0);
 
 			var cam = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
@@ -155,25 +170,17 @@ namespace GameScene.Controller
 		{
 			if (IsFalling)
 			{
-				_animator.SetFloat(FallSpeedKey, Mathf.Clamp01(Mathf.Abs(_rigidbody.velocity.y / _maxFallSpeed)));
+				_animator.SetFloat(VerticalSpeedKey, _rigidbody.velocity.y / _maxFallSpeed);
 				return;
 			}
 
 			Vector3 velocity;
-			CharacterDirection direction;
 			if (IsOnStair)
 			{
 				velocity = new Vector3(_input.MoveDirection.x, _input.MoveDirection.y) *
 				           _playerCharacterSettings.DefaultSpeed * _playerCharacterSettings.StairSpeedModifier;
-				direction = velocity == Vector3.zero
-					? CharacterDirection.None
-					: Mathf.Abs(velocity.x) < Mathf.Abs(velocity.y)
-						? velocity.y > 0
-							? CharacterDirection.Up
-							: CharacterDirection.Down
-						: velocity.x > 0
-							? CharacterDirection.Right
-							: CharacterDirection.Left;
+				_animator.SetFloat(HorizontalSpeedKey, _input.MoveDirection.x);
+				_animator.SetFloat(VerticalSpeedKey, _input.MoveDirection.y);
 			}
 			else
 			{
@@ -197,26 +204,18 @@ namespace GameScene.Controller
 
 				if (velocity.x > 0)
 				{
-					direction = CharacterDirection.Right;
 					if (!IsHanging) LookAt(Direction.Right);
 				}
 				else if (velocity.x < 0)
 				{
-					direction = CharacterDirection.Left;
 					if (!IsHanging) LookAt(Direction.Left);
 				}
-				else
-				{
-					direction = CharacterDirection.None;
-				}
+
+				_animator.SetFloat(HorizontalSpeedKey, _input.MoveDirection.x);
+				_animator.SetFloat(VerticalSpeedKey, 0);
 			}
 
 			_rigidbody.velocity = velocity;
-			if (direction != _lastMoveDirection)
-			{
-				_lastMoveDirection = direction;
-				_animator.SetInteger(MoveKey, (int) direction);
-			}
 		}
 
 		private void OnCollisionEnter(Collision other)
@@ -232,7 +231,10 @@ namespace GameScene.Controller
 		private void OnCollisionExit(Collision other)
 		{
 			_collisions.Remove(other.collider);
-			if (_collisions.Count <= 0 && !IsOnStair) IsFalling = true;
+			if (_collisions.Count <= 0 && !IsOnStair)
+			{
+				IsFalling = true;
+			}
 		}
 
 		private enum Direction

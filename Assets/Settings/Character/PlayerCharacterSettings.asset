@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe66a64324dc44e6b43c24b7b28ac88e, type: 3}
   m_Name: PlayerCharacterSettings
   m_EditorClassIdentifier: 
-  _defaultSpeed: 1.2
-  _ropeSpeedModifier: 0.5
-  _stairSpeedModifier: 0.5
+  _defaultSpeed: 1.85
+  _ropeSpeedModifier: 0.25
+  _stairSpeedModifier: 0.3
   _safeFallSpeed: 10
   _deadlyFallSpeed: 15

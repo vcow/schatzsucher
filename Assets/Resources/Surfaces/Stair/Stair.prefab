@@ -58,10 +58,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hasOuterBounds: 0
-  _innerLeftBottomFront: {x: -0.5, y: -0.5, z: -0.5}
-  _innerRightTopBack: {x: 0.5, y: 0.5, z: 0.5}
-  _outerLeftBottomFront: {x: -0.5, y: -0.5, z: -0.5}
-  _outerRightTopBack: {x: 0.5, y: 0.5, z: 0.5}
+  _innerLeftBottomFront: {x: -0.125, y: -0.5, z: -0.5}
+  _innerRightTopBack: {x: 0.125, y: 0.5, z: 0.5}
+  _outerLeftBottomFront: {x: -0.125, y: -0.5, z: -0.5}
+  _outerRightTopBack: {x: 0.125, y: 0.5, z: 0.5}
 --- !u!1 &5283917059564293140
 GameObject:
   m_ObjectHideFlags: 0
